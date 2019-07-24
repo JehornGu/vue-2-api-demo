@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<div id="app">
+    <ul>
+        <li>a: {{ a }}</li>
+        <li>b: {{ b }}</li>
+        <li>c: {{ c }}</li>
+        <li>obj.a: {{ obj.a }}</li>
+        <li>obj.b: {{ obj.b }}</li>
+        <li>obj.c: {{ obj.c }}</li>
+    </ul>
+    <ul>
+        <li v-for="item in arr">{{ item.id }}: {{ item.name }}</li>
+    </ul>
+    <ul>
+        <li v-for="item in arr2">{{ item }}</li>
+    </ul>
+</div>
+
+<div id="app2">
+    <p>{{ r }}</p>
+</div>
+
+<script src="../vendor/vue.js"></script>
+<script type="text/javascript">
+    const myMixin = {
+        data() {
+            return {
+                a: 1,
+                c: 3,
+                obj: {
+                    a: 1,
+                    b: 2
+                },
+                arr: [
+                    { id: 1, name: 'a' },
+                    { id: 2, name: 'b' }
+                ],
+                arr2: [1, 2, 3]
+            }
+        },
+        methods: {
+            sayHello() {
+                console.log('Hello world!');
+            }
+        },
+        mounted() {
+            this.sayHello();
+        }
+    };
+
+    new Vue({
+        el: '#app',
+        mixins: [myMixin],
+        data() {
+            return {
+                b: 2,
+                c: 4,
+                obj: {
+                    b: 3,
+                    c: 3
+                },
+                arr: [
+                    { id: 2, name: 'b2' },
+                    { id: 3, name: 'c' }
+                ],
+                arr2: [3, 4, 5]
+            }
+        }
+    });
+
+
+    const myMixin2 = {
+        created() {
+            console.log('%s created hook!', 'mixin');
+        }
+    };
+
+    new Vue({
+        mixins: [myMixin2],
+        created() {
+            console.log('%s created hook!', 'component');
+        }
+    });
+
+    const myMixin3 = {
+        data() {
+            return {
+                a: 1
+            }
+        },
+        methods: {
+            foo() {
+                console.log('This is foo');
+            },
+            bar() {
+                console.log('This is bar');
+            }
+        },
+        watch: {
+            a(v) {
+                console.log('watch value from mixin: %s', v);
+            }
+        },
+        computed: {
+            r() {
+                return `computed value from mixin: ${ this.a }`;
+            }
+        }
+    };
+
+    const vm = new Vue({
+        mixins: [myMixin3],
+        el: '#app2',
+        data() {
+            return {
+                b: 2
+            }
+        },
+        watch: {
+            a(v) {
+                console.log('watch value from component: %s', v + this.b);
+            }
+        },
+        computed: {
+            r() {
+                return `computed value from component: ${ this.a * this.b }`;
+            }
+        },
+        methods: {
+            bar() {
+                console.log('This is balabala');
+            },
+            count() {
+                this.a++;
+            }
+        },
+        created() {
+            setInterval(() => {
+                this.count();
+            }, 2000);
+        }
+    });
+
+    vm.foo(); // This is foo
+    vm.bar(); // This is balabala
+
+
+    Vue.mixin({
+        created() {
+            const isTrigger = this.$options.trigger;
+            if (!isTrigger) return;
+            console.log('Global mixin created hook log.');
+        }
+    });
+
+    new Vue({
+        trigger: true,
+        created() {
+            console.log('A component after global mixin.');
+        }
+    });
+
+</script>
+</body>
+</html>

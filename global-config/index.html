@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<div id="app">
+    <ul class="list">
+        <li v-for="item in list" :data-id="item.id">{{ item.name }}</li>
+    </ul>
+    <p>{{ Hello }}</p>
+
+    <ul>
+        <li>
+            <label><input type="text" placeholder="focus & press [v]" @keyup.v="keyUpHandler"></label>
+        </li>
+        <li>
+            <label><input type="text" placeholder="focus & press [silent]" @keyup.media-silent="keyUpHandler"></label>
+        </li>
+        <li>
+            <label><input type="text" placeholder="focus & press [↑|w]" @keyup.forward="keyUpHandler"></label>
+        </li>
+    </ul>
+</div>
+
+<script src="../vendor/vue.js"></script>
+<script type="text/javascript">
+
+    Vue.config.silent = true;
+    Vue.config.errorHandler = function (err, vm, info) {
+        // info 是Vue特定的错误信息，比如错误所在的生命周期钩子
+        console.log('===============errorHandler=============');
+        console.log(err);
+        console.log(vm);
+        console.log(info);
+        console.log('=================================');
+    };
+    Vue.config.warnHandler = function (msg, vm, trace) {
+        // trace 是组件的继承关系追踪
+        console.log('===============warnHandler=============');
+        console.log(msg);
+        console.log(vm);
+        console.log(trace);
+        console.log('=================================');
+    };
+    Vue.config.keyCodes = {
+        v: 86,
+        'media-silent': 173,
+        forward: [38, 87],
+        back: [40, 83],
+        left: [37, 65],
+        right: [39, 68]
+    };
+    Vue.config.performance = true;
+    Vue.config.productionTip = false;
+
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                list: [
+                    { id: 1, name: 'a' },
+                    { id: 2, name: 'b' },
+                    { id: 3, name: 'c' }
+                ]
+            }
+        },
+        methods: {
+            myGetter() {
+                throw new Error('Bad!');
+            },
+            keyUpHandler(e) {
+                console.log(e);
+            }
+        },
+        created() {
+            this.myGetter();
+        }
+    });
+</script>
+</body>
+</html>
